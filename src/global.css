@@ -1,0 +1,84 @@
+:root {
+  --bg: #f5f6fa;
+  --card: #fff;
+  --text: #111827;
+  --muted: #6b7280;
+  --blue: #2563eb;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --border: #e5e7eb;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial;
+}
+
+.page {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+.pad {
+  padding: 1.5rem;
+}
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+.section {
+  padding: 1rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--blue);
+  color: #fff;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+}
+.btn:hover {
+  background: var(--blue-700);
+}
+.input,
+select,
+textarea {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: #fff;
+}
+h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+.text-muted {
+  color: var(--muted);
+}
+.grid {
+  display: grid;
+  gap: 1rem;
+}
