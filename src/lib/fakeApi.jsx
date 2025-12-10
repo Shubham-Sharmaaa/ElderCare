@@ -385,20 +385,23 @@ export const apiHospital = {
     if (res && Array.isArray(res)) return res;
     return db().doctors.filter((d) => d.hospitalId === hospitalId);
   },
-  addDoctor(hospitalId, name, email) {
+  async addDoctor(hospitalId, name, email) {
     const dct = { id: uid(), hospitalId, name, email };
     db().doctors.push(dct);
     flush();
 
     // 🔄 background sync to backend
-    fetchJSON(`/api/hospitals/${encodeURIComponent(hospitalId)}/doctors`, {
-      method: "POST",
-      body: JSON.stringify({
-        _id: dct.id,
-        name: dct.name,
-        email: dct.email,
-      }),
-    }).catch((err) =>
+    await fetchJSON(
+      `/api/hospitals/${encodeURIComponent(hospitalId)}/doctors`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          _id: dct.id,
+          name: dct.name,
+          email: dct.email,
+        }),
+      }
+    ).catch((err) =>
       console.warn("[apiHospital.addDoctor] backend sync failed:", err?.message)
     );
 

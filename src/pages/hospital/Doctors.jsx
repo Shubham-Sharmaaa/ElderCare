@@ -43,15 +43,16 @@ export default function HospitalDoctors() {
     };
   }, [user?.hospitalId]);
 
-  const add = () => {
+  const add = async () => {
     setErr("");
     if (!name.trim() || !email.trim()) {
       setErr("Name and email are required.");
       return;
     }
     try {
-      apiHospital.addDoctor(user.hospitalId, name.trim(), email.trim());
-      setRows(apiHospital.doctors(user.hospitalId));
+      await apiHospital.addDoctor(user.hospitalId, name.trim(), email.trim());
+      const doctors = await apiHospital.doctors(user.hospitalId);
+      setRows(doctors);
       setName("");
       setEmail("");
     } catch (e) {
@@ -103,7 +104,7 @@ export default function HospitalDoctors() {
             </thead>
             <tbody>
               {rows.map((d) => (
-                <tr key={d.id}>
+                <tr key={d._id}>
                   <td>{d.name}</td>
                   <td>{d.email}</td>
                 </tr>
