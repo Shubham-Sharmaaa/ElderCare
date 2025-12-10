@@ -6,10 +6,11 @@ export default function AdminDashboard() {
   const [email, setEmail] = useState("");
   const [hosp, setHosp] = useState([]);
 
-  const add = () => {
+  const add = async () => {
     if (!name.trim()) return;
-    apiAdmin.createHospital(name.trim(), email.trim());
-    setHosp(apiAdmin.listHospitals());
+    await apiAdmin.createHospital(name.trim(), email.trim());
+    const list = await apiAdmin.listHospitals();
+    setHosp(list);
     setName("");
     setEmail("");
   };
@@ -22,6 +23,7 @@ export default function AdminDashboard() {
     }
     loadHospitals().then(setHosp);
   }, []);
+  console.log("Hospitals:", hosp);
   return (
     <div className="grid">
       <div className="card pad">
@@ -47,11 +49,7 @@ export default function AdminDashboard() {
 
       <div className="card pad">
         <h3>Hospitals</h3>
-        <ul>
-          {hosp.map((h) => (
-            <li key={h._id}>{h.name}</li>
-          ))}
-        </ul>
+        <ul>{hosp && hosp.map((h) => <li key={h._id}>{h.name}</li>)}</ul>
       </div>
     </div>
   );

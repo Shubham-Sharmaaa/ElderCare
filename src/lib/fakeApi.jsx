@@ -354,7 +354,7 @@ export const apiHospital = {
     return hospitals;
   },
   // in apiHospital.add(name)
-  add(name, email) {
+  async add(name, email) {
     console.log(email);
     const emailToken = email
       ? email.split("@")[0]
@@ -364,7 +364,7 @@ export const apiHospital = {
     db().hospitals.push(h);
     flush();
     // 🔄 background sync to backend
-    fetchJSON("/api/hospitals", {
+    await fetchJSON("/api/hospitals", {
       method: "POST",
       body: JSON.stringify({
         _id: h.id,
@@ -847,12 +847,12 @@ export const apiAdmin = {
     return [...u, ...hosp, ...docs];
   },
 
-  createHospital(name, email) {
-    return apiHospital.add(name, email);
+  async createHospital(name, email) {
+    return await apiHospital.add(name, email);
   },
 
-  listHospitals() {
-    return apiHospital.list();
+  async listHospitals() {
+    return await apiHospital.list();
   },
 
   addDoctor(hospitalId, name, email) {
