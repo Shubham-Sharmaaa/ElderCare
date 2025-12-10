@@ -8,8 +8,25 @@ import {
 
 export default function Triage() {
   const { user } = useAuth();
-  const rows = apiHospital
-    .elders(user.id)
+  const [elders, setElders] = React.useState([]);
+  React.useEffect(() => {
+    if (!user?.id) return;
+    let alive = true;
+    async function loadElders() {
+      try {
+        const es = await apiHospital.elders(user.id);
+        if (alive) setElders(es || []);
+      } catch (e) {
+        if (alive) setElders([]);
+      }
+    }
+    loadElders();
+    return () => {
+      alive = false;
+    };
+  }, [user?.id]);
+
+  const rows = elders
     .map((e) => {
       const last = apiVitals.recent(e.id, 1)[0];
       const risk = computeRiskFromVitals(last);

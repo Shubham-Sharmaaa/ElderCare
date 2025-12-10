@@ -9,13 +9,38 @@ export default function HospitalDoctors() {
   const [email, setEmail] = useState("");
   const [err, setErr] = useState("");
 
+  // useEffect(() => {
+  //   if (!user?.hospitalId) return;
+  //   async function fetchDoctors() {
+  //     const doctors = await apiHospital.doctors(user.hospitalId);
+  //     return doctors;
+  //   }
+  //   try {
+  //     const doctors = fetchDoctors();
+  //     setRows(doctors);
+  //   } catch (e) {
+  //     setErr(e?.message || "Failed to load doctors");
+  //   }
+  // }, [user?.hospitalId]);
   useEffect(() => {
     if (!user?.hospitalId) return;
-    try {
-      setRows(apiHospital.doctors(user.hospitalId));
-    } catch (e) {
-      setErr(e?.message || "Failed to load doctors");
+
+    let alive = true;
+
+    async function load() {
+      try {
+        const doctors = await apiHospital.doctors(user.hospitalId);
+        if (alive) setRows(doctors || []);
+      } catch (e) {
+        if (alive) setErr(e?.message || "Failed to load doctors");
+      }
     }
+
+    load();
+
+    return () => {
+      alive = false;
+    };
   }, [user?.hospitalId]);
 
   const add = () => {
