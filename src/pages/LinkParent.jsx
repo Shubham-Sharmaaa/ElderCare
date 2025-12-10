@@ -1,11 +1,46 @@
-import React, { useMemo, useState } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { apiElders, apiHospital } from "../lib/fakeApi";
 
 export default function LinkParent() {
   const { user } = useAuth();
-  const hospitals = apiHospital.list();
-  const elders = useMemo(() => apiElders.listByOwner(user.id), [user.id]);
+  console.log("usre", user);
+  const [hospitals, setHospitals] = useState([]);
+  useEffect(() => {
+    if (!user.id) return;
+    let alive = true;
+    async function fetchhosp() {
+      try {
+        const hosp = await apiHospital.list();
+        if (alive) setHospitals(hosp);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    fetchhosp();
+    return () => {
+      alive = false;
+    };
+  }, [user.id]);
+  // const hospitals = apiHospital.list();
+  const [elders, setElders] = useState([]);
+  // const elders = useMemo(() => apiElders.listByOwner(user.id), [user.id]);
+  useEffect(() => {
+    if (!user.id) return;
+    let alive = true;
+    async function fetchelder() {
+      try {
+        const elder = await apiElders.listByOwner(user.id);
+        if (alive) setElders(elder);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    fetchelder();
+    return () => {
+      alive = false;
+    };
+  }, [user.id]);
   const [f, setF] = useState({
     name: "",
     age: "",
