@@ -468,7 +468,15 @@ export const apiHospital = {
 // --------- ELDERS (NRI) ----------
 
 export const apiElders = {
-  create({ ownerId, name, age, condition, conditions, notes, hospitalId }) {
+  async create({
+    ownerId,
+    name,
+    age,
+    condition,
+    conditions,
+    notes,
+    hospitalId,
+  }) {
     if (!ownerId || !hospitalId)
       throw new Error("ownerId & hospitalId required");
     if (!name | !age | !condition) {
@@ -498,7 +506,7 @@ export const apiElders = {
     flush();
 
     // 🔄 fire-and-forget sync to backend (does NOT change return value)
-    fetchJSON("/api/elders", {
+    await fetchJSON("/api/elders", {
       method: "POST",
       body: JSON.stringify({
         _id: e.id,

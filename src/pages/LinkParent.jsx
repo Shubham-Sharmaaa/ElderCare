@@ -25,6 +25,7 @@ export default function LinkParent() {
   // const hospitals = apiHospital.list();
   const [elders, setElders] = useState([]);
   // const elders = useMemo(() => apiElders.listByOwner(user.id), [user.id]);
+
   useEffect(() => {
     if (!user.id) return;
     let alive = true;
@@ -41,26 +42,42 @@ export default function LinkParent() {
       alive = false;
     };
   }, [user.id]);
+  console.log("hospital", hospitals[0]?._id);
   const [f, setF] = useState({
     name: "",
     age: "",
     condition: "",
     notes: "",
-    hospitalId: hospitals[0]?.id,
+    hospitalId: hospitals[0]?._id,
   });
+  // useEffect(() => {
+  //   if (!f) return;
+  //   setF({ hospitalId: hospitals[0]?._id, ...f });
+  // }, [hospitals, f]);
   const [assigned, setAssigned] = useState(null);
+  console.log("f", f);
 
-  const add = () => {
-    const e = apiElders.create({ ownerId: user.id, ...f });
+  const add = async () => {
+    console.log("ff", f);
+    const e = await apiElders.create({ ownerId: user.id, ...f });
     setF({
       name: "",
       age: "",
       condition: "",
       notes: "",
-      hospitalId: hospitals[0]?.id,
+      hospitalId: hospitals[0]?._id,
     });
     setAssigned(e);
   };
+  useEffect(() => {
+    if (!hospitals.length) return;
+
+    setF((prev) =>
+      prev.hospitalId
+        ? prev // don’t overwrite if user already picked something
+        : { ...prev, hospitalId: hospitals[0]._id }
+    );
+  }, [hospitals]);
 
   return (
     <div className="grid">
@@ -97,7 +114,7 @@ export default function LinkParent() {
             onChange={(e) => setF({ ...f, hospitalId: e.target.value })}
           >
             {hospitals.map((h) => (
-              <option key={h.id} value={h.id}>
+              <option key={h._id} value={h._id}>
                 {h.name}
               </option>
             ))}
@@ -114,7 +131,7 @@ export default function LinkParent() {
         <h3>Linked Parents</h3>
         <ul>
           {elders.map((e) => (
-            <li key={e.id}>
+            <li key={e._id}>
               <strong>{e.name}</strong> — {e.condition}
             </li>
           ))}
