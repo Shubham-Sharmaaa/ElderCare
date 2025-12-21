@@ -777,7 +777,7 @@ export const apiAi = {
 
     const hosp = hospital?.name;
     const doctor = await fetchJSON(
-      `api/doctors?doctorId=${encodeURIComponent(e.doctorId)}`
+      `/api/doctors?doctorId=${encodeURIComponent(e.doctorId)}`
     );
 
     const doc = doctor?.name || "(unassigned)";
