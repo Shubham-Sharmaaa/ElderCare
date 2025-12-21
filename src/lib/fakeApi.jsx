@@ -8,12 +8,30 @@ const uid = () => Math.random().toString(36).slice(2, 10);
 const VITAL_EVENT = "wn:vitals";
 
 // ---- HTTP helper to talk to backend via Vite proxy (/api -> :5174) ----
-async function fetchJSON(path, init) {
-  const res = await fetch(path, {
-    headers: { "Content-Type": "application/json" },
+// async function fetchJSON(path, init) {
+//   const res = await fetch(path, {
+//     headers: { "Content-Type": "application/json" },
+//     ...init,
+//   });
+//   if (!res.ok) throw new Error(`API ${res.status}`);
+//   return res.json();
+// }
+const API_BASE = import.meta.env.VITE_API_BASE || "";
+
+async function fetchJSON(path, init = {}) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(init.headers || {}),
+    },
     ...init,
   });
-  if (!res.ok) throw new Error(`API ${res.status}`);
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || `API ${res.status}`);
+  }
+
   return res.json();
 }
 
