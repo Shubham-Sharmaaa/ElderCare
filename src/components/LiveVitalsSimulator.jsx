@@ -9,7 +9,9 @@ export default function LiveVitalsCard({ elderId }) {
   const lastIdRef = useRef(list.slice(-1)[0]?.id || "");
   useEffect(() => {
     async function fetchVitals(elderId) {
+      console.log("id ", elderId);
       const res = await apiVitals.recent(elderId, 10);
+      console.log("res2 ", res);
       return res;
     }
     fetchVitals(elderId).then(setList);

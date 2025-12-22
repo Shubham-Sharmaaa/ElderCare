@@ -745,7 +745,7 @@ export const apiVitals = {
     const res = await fetchJSON(
       `/api/elders/${encodeURIComponent(elderId)}/vitals`
     );
-
+    console.log("res1:  ", res);
     if (!res || !res.ok) {
       return db()
         .vitals.filter((v) => v.elderId === elderId)

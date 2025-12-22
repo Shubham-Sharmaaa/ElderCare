@@ -53,6 +53,13 @@ const r = Router({ mergeParams: true });
 // GET /api/elders/:id/vitals?limit=50&since=ISO_TIMESTAMP
 r.get("/", async (req, res) => {
   try {
+    res.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
+    res.set("Pragma", "no-cache");
+    res.set("Expires", "0");
+    res.set("Surrogate-Control", "no-store");
     const elderId = req.params.id;
     if (!elderId) return res.status(400).json({ error: "missing_elder_id" });
 
