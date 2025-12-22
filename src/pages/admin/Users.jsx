@@ -1,8 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { apiAdmin } from "../../lib/fakeApi";
 
 export default function Users() {
-  const list = apiAdmin.listUsers();
+  const [list, setlist] = useState([]);
+  useEffect(() => {
+    async function fetchtotal() {
+      try {
+        const res = await apiAdmin.listUsers();
+        if (res) setlist(res);
+        return;
+      } catch (e) {
+        console.log(e);
+        return;
+      }
+    }
+    fetchtotal();
+  }, []);
+
   return (
     <div className="card pad">
       <h3>All Accounts</h3>

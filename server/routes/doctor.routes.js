@@ -4,6 +4,17 @@ import Doctor from "../models/Doctor.js";
 
 const r = Router();
 
+r.get("/all", async (req, res) => {
+  try {
+    const doctor = await Doctor.find({}).lean();
+    if (!doctor) return res.status(404).json({ error: "not_found" });
+    return res.json(doctor);
+  } catch (e) {
+    console.error("GET /api/all failed:", e);
+    res.status(500).json({ error: "server" });
+  }
+});
+
 r.get("/", async (req, res) => {
   try {
     console.log("Query params(doctors):", req.query);

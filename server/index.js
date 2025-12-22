@@ -145,7 +145,7 @@ import hospitalsRouter from "./routes/hospital.routes.js";
 import doctorRouter from "./routes/doctor.routes.js";
 import reportsRouter from "./routes/reports.routes.js";
 import notesRouter from "./routes/notes.routes.js";
-
+import userRouter from "./routes/user.routes.js";
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -161,12 +161,15 @@ app.use("/api/devices", devicesAdminRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/hospitals", hospitalsRouter);
 app.use("/api/doctors", doctorRouter);
+app.use("/api/user", userRouter);
 app.use("/api", reportsRouter);
 app.use("/api", notesRouter);
-
+// http://localhost:11434
 // ---- AI remedies route (your existing logic) ----
 const HAS_OPENAI = !!process.env.OPENAI_API_KEY;
-const OLLAMA_URL = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
+const OLLAMA_URL =
+  process.env.OLLAMA_BASE_URL ||
+  "https://much-contemporary-priorities-nextel.trycloudflare.com";
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "mistral:7b";
 
 const openai = HAS_OPENAI

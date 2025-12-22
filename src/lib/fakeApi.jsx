@@ -367,6 +367,7 @@ export const apiAuth = {
 export const apiHospital = {
   async list() {
     const res = await fetch("/api/hospitals");
+    console.log("hh  ", res);
     if (!res.ok) throw new Error("API error");
     const hospitals = await res.json();
     return hospitals;
@@ -852,28 +853,15 @@ const notes = []; // { id, elderId, doctorId, tsISO, text }
 
 // ---------- ADMIN ----------
 export const apiAdmin = {
-  listUsers() {
-    const d = db();
-    // Flatten: admin/nri users + pseudo hospital/doctor accounts for visibility
-    const u = d.users.map((x) => ({
-      id: x.id,
-      name: x.name,
-      email: x.email,
-      role: x.role,
-    }));
-    const hosp = d.hospitals.map((h) => ({
-      id: h.id,
-      name: h.name,
-      email: h.email,
-      role: "hospital",
-    }));
-    const docs = d.doctors.map((dv) => ({
-      id: dv.id,
-      name: dv.name,
-      email: dv.email,
-      role: "doctor",
-    }));
-    return [...u, ...hosp, ...docs];
+  async listNri() {
+    const res = await fetchJSON("/api/user");
+    return res;
+  },
+  async listUsers() {
+    const users = await apiAdmin.listNri();
+    const hosp = await apiHospital.list();
+    const doc = await apiAdmin.listDoctors();
+    return [...users, ...hosp, ...doc];
   },
 
   async createHospital(name, email) {
@@ -883,7 +871,11 @@ export const apiAdmin = {
   async listHospitals() {
     return await apiHospital.list();
   },
-
+  async listDoctors() {
+    const res = await fetchJSON("/api/doctors/all");
+    if (res) return res;
+    return [];
+  },
   addDoctor(hospitalId, name, email) {
     return apiHospital.addDoctor(hospitalId, name, email);
   },
