@@ -48,8 +48,10 @@ export function AuthProvider({ children }) {
 
     // ---- doctor enrichment step ----
     if (u && u.role === "doctor") {
+      console.log("u ", u);
       // after finding doc
-      const hosp = apiHospital.list().find((h) => h.id === u.hospitalId);
+      const hosps = await apiHospital.list();
+      const hosp = hosps && hosps.find((h) => h._id === u.hospitalId);
       const enriched = {
         id: u.id,
         role: "doctor",

@@ -31,17 +31,55 @@ export default function DoctorHome() {
     loadDoctorElders(user.id).then(setPatients);
   }, [user?.id]);
   // console.log(patients);
+  // useEffect(() => {
+  //   if (!user?.hospitalId) return;
+  //   const myIds = new Set(
+  //     (apiElders.listByDoctor(user.id) || []).map((e) => e.id)
+  //   );
+  //   const allForHospital = apiReports.listForHospital(user.hospitalId);
+  //   setPendingReports(
+  //     allForHospital.filter(
+  //       (r) => myIds.has(r.elderId) && r.status === "pending"
+  //     )
+  //   );
+  // }, [user?.id, user?.hospitalId]);
   useEffect(() => {
-    if (!user?.hospitalId) return;
-    const myIds = new Set(
-      (apiElders.listByDoctor(user.id) || []).map((e) => e.id)
-    );
-    const allForHospital = apiReports.listForHospital(user.hospitalId);
-    setPendingReports(
-      allForHospital.filter(
-        (r) => myIds.has(r.elderId) && r.status === "pending"
-      )
-    );
+    if (!user?.id || !user?.hospitalId) return;
+
+    let alive = true;
+
+    async function loadPending() {
+      try {
+        // ✅ both are async → await them
+        const eldersRes = await apiElders.listByDoctor(user.id);
+        const elders = Array.isArray(eldersRes)
+          ? eldersRes
+          : eldersRes?.data || eldersRes?.elders || eldersRes?.items || [];
+
+        const myIds = new Set(elders.map((e) => e._id || e.id));
+
+        const reportsRes = await apiReports.listForHospital(user.hospitalId);
+        const allForHospital = Array.isArray(reportsRes)
+          ? reportsRes
+          : reportsRes?.data || reportsRes?.reports || reportsRes?.items || [];
+
+        const pending = allForHospital.filter(
+          (r) =>
+            myIds.has(r.elderId || r.elder?._id || r.elder?.id) &&
+            r.status === "pending"
+        );
+
+        if (alive) setPendingReports(pending);
+      } catch (err) {
+        console.error("loadPending failed:", err);
+        if (alive) setPendingReports([]);
+      }
+    }
+
+    loadPending();
+    return () => {
+      alive = false;
+    };
   }, [user?.id, user?.hospitalId]);
 
   const alertsNow = useMemo(() => {
@@ -74,7 +112,7 @@ export default function DoctorHome() {
         ) : (
           <ul className="grid-2">
             {patients.map((p) => (
-              <li key={p.id} className="card" style={{ margin: 0 }}>
+              <li key={p._id} className="card" style={{ margin: 0 }}>
                 <div className="kv">
                   <b>{p.name}</b>
                 </div>

@@ -641,8 +641,12 @@ export const apiElders = {
     return db().elders.filter((e) => e.hospitalId === hospitalId);
   },
 
-  listByDoctor(doctorId) {
+  async listByDoctor(doctorId) {
     // console.log(db().elders.filter((e) => e.doctorId === doctorId));
+    const doc = await fetchJSON(
+      `/api/doctors/?doctorId=${encodeURIComponent(doctorId)}`
+    );
+    if (doc) return doc;
     return db().elders.filter((e) => e.doctorId === doctorId);
   },
 
@@ -858,10 +862,19 @@ export const apiAdmin = {
     return res;
   },
   async listUsers() {
-    const users = await apiAdmin.listNri();
-    const hosp = await apiHospital.list();
-    const doc = await apiAdmin.listDoctors();
-    return [...users, ...hosp, ...doc];
+    let users = await apiAdmin.listNri();
+    users = users.map((user) => {
+      return { ...user, role: "nri" };
+    });
+    let hosps = await apiHospital.list();
+    hosps = hosps.map((hosp) => {
+      return { ...hosp, role: "hosp" };
+    });
+    let docs = await apiAdmin.listDoctors();
+    docs = docs.map((doc) => {
+      return { ...doc, role: "doc" };
+    });
+    return [...users, ...hosps, ...docs];
   },
 
   async createHospital(name, email) {
