@@ -746,10 +746,9 @@ export const apiVitals = {
       `/api/elders/${encodeURIComponent(elderId)}/vitals`
     );
     console.log("res1:  ", res);
-    if (!res || !res.ok) {
-      return db()
-        .vitals.filter((v) => v.elderId === elderId)
-        .slice(-limit);
+    if (!res) {
+      console.log("couldnt fetch vitals");
+      return;
     } else {
       return res.then((data) => data.slice(-limit));
     }
